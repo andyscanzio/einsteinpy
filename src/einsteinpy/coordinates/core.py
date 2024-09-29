@@ -19,16 +19,16 @@ class BaseCoordinates:
         self.e3 = e3
         self.system = system
         self.name_map = {
-            name_e0: self.e0,
-            name_e1: self.e1,
-            name_e2: self.e2,
-            name_e3: self.e3,
+            name_e0: 'e0',
+            name_e1: 'e1',
+            name_e2: 'e2',
+            name_e3: 'e3',
         }
         self.name_list = [name_e0, name_e1, name_e2, name_e3]
 
     def stringify(self):
         values = ", ".join(
-            f"{name} = ({value})" for name, value in self.name_map.items()
+            f"{name} = ({self.name_map.get(name)})" for name in self.name_list
         )
         return f"{self.system} Coordinates: \n \
             {values}"
@@ -51,11 +51,19 @@ class BaseCoordinates:
 
         """
         if isinstance(item, (int, np.integer)):
-            return self.name_map[self.name_list[item]]
-        return self.name_map[item]
+            return getattr(self, self.name_map[self.name_list[item]])
+        return getattr(self, self.name_map[item])
 
-    def __getattr__(self, name):
-        return self.name_map.get(name)
+    def __getattr__(self, attr):
+        if attr in self.name_map:
+            return getattr(self, self.name_map[attr])
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{attr}'")
+    
+    def __setattr__(self, attr, value):
+        if 'name_map' in self.__dict__ and attr in self.name_map:
+            object.__setattr__(self, self.name_map[attr], value)
+        else:
+            object.__setattr__(self, attr, value)
 
     def position(self):
         """

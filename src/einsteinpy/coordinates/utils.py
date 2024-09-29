@@ -6,16 +6,8 @@ from einsteinpy.ijit import jit
 _c = constant.c.value
 
 
-def cartesian_to_spherical_fast(
-    e0, e1, e2, e3, u1=None, u2=None, u3=None, velocities_provided=False
-):
-    if velocities_provided:
-        return cartesian_to_spherical(e0, e1, e2, e3, u1, u2, u3)
-    return cartesian_to_spherical_novel(e0, e1, e2, e3)
-
-
 @jit
-def cartesian_to_spherical(e0, e1, e2, e3, u1, u2, u3):
+def cartesian_to_spherical(e0, e1, e2, e3, alpha, u1, u2, u3):
     """
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
@@ -35,7 +27,7 @@ def cartesian_to_spherical(e0, e1, e2, e3, u1, u2, u3):
 
 
 @jit
-def cartesian_to_spherical_novel(e0, e1, e2, e3):
+def cartesian_to_spherical_novel(e0, e1, e2, e3, alpha):
     """
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
@@ -47,15 +39,6 @@ def cartesian_to_spherical_novel(e0, e1, e2, e3):
     sph_e3 = np.arctan2(e2, e1)
 
     return e0, sph_e1, sph_e2, sph_e3
-
-
-def cartesian_to_bl_fast(
-    e0, e1, e2, e3, alpha, u1=None, u2=None, u3=None, velocities_provided=False
-):
-    if velocities_provided:
-        return cartesian_to_bl(e0, e1, e2, e3, alpha, u1, u2, u3)
-    return cartesian_to_bl_novel(e0, e1, e2, e3, alpha)
-
 
 @jit
 def cartesian_to_bl(e0, e1, e2, e3, alpha, u1, u2, u3):
@@ -97,16 +80,8 @@ def cartesian_to_bl_novel(e0, e1, e2, e3, alpha):
     return e0, bl_e1, bl_e2, bl_e3
 
 
-def spherical_to_cartesian_fast(
-    e0, e1, e2, e3, u1=None, u2=None, u3=None, velocities_provided=False
-):
-    if velocities_provided:
-        return spherical_to_cartesian(e0, e1, e2, e3, u1, u2, u3)
-    return spherical_to_cartesian_novel(e0, e1, e2, e3)
-
-
 @jit
-def spherical_to_cartesian(e0, e1, e2, e3, u1, u2, u3):
+def spherical_to_cartesian(e0, e1, e2, e3, alpha, u1, u2, u3):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -131,7 +106,7 @@ def spherical_to_cartesian(e0, e1, e2, e3, u1, u2, u3):
 
 
 @jit
-def spherical_to_cartesian_novel(e0, e1, e2, e3):
+def spherical_to_cartesian_novel(e0, e1, e2, e3, alpha):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -142,14 +117,6 @@ def spherical_to_cartesian_novel(e0, e1, e2, e3):
     car_e3 = e1 * np.cos(e2)
 
     return e0, car_e1, car_e2, car_e3
-
-
-def bl_to_cartesian_fast(
-    e0, e1, e2, e3, alpha, u1=None, u2=None, u3=None, velocities_provided=False
-):
-    if velocities_provided:
-        return bl_to_cartesian(e0, e1, e2, e3, alpha, u1, u2, u3)
-    return bl_to_cartesian_novel(e0, e1, e2, e3, alpha)
 
 
 @jit
@@ -193,6 +160,20 @@ def bl_to_cartesian_novel(e0, e1, e2, e3, alpha):
     car_e3 = e1 * np.cos(e2)
 
     return e0, car_e1, car_e2, car_e3
+
+conversion_map = {('Cartesian', 'Spherical'):(cartesian_to_spherical, cartesian_to_spherical_novel),
+                  ('Cartesian', 'BoyerLindquist'):(cartesian_to_bl, cartesian_to_bl_novel),
+                  ('Spherical', 'Cartesian'):(spherical_to_cartesian, spherical_to_cartesian_novel),
+                  ('BoyerLindquist', 'Cartesian'):(bl_to_cartesian, bl_to_cartesian_novel),
+                  }
+
+def convert_fast(
+    from_system, to_system, e0, e1, e2, e3, alpha, u1=None, u2=None, u3=None, velocities_provided=False
+):
+    convert, convert_novel = conversion_map.get((from_system, to_system))
+    if velocities_provided:
+        return convert(e0, e1, e2, e3, alpha, u1, u2, u3)
+    return convert_novel(e0, e1, e2, e3, alpha)
 
 
 def lorentz_factor(u1, u2, u3):

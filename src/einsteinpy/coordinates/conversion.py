@@ -1,9 +1,4 @@
-from einsteinpy.coordinates.utils import (
-    bl_to_cartesian_fast,
-    cartesian_to_bl_fast,
-    cartesian_to_spherical_fast,
-    spherical_to_cartesian_fast,
-)
+from einsteinpy.coordinates.utils import convert_fast
 from einsteinpy.metric import BaseMetric
 
 class Conversion:
@@ -99,11 +94,14 @@ class CartesianConversion(Conversion):
             Spherical Polar Coordinates
 
         """
-        return cartesian_to_spherical_fast(
+        return convert_fast(
+            "Cartesian",
+            "Spherical",
             self.e0_si,
             self.e1_si,
             self.e2_si,
             self.e3_si,
+            None,
             self.u1_si,
             self.u2_si,
             self.u3_si,
@@ -151,7 +149,9 @@ class CartesianConversion(Conversion):
 
         alpha = BaseMetric.alpha(M=M, a=a)
 
-        return cartesian_to_bl_fast(
+        return convert_fast(
+            "Cartesian",
+            "BoyerLindquist",
             self.e0_si,
             self.e1_si,
             self.e2_si,
@@ -224,11 +224,14 @@ class SphericalConversion(Conversion):
             Cartesian Coordinates
 
         """
-        return spherical_to_cartesian_fast(
+        return convert_fast(
+            "Spherical",
+            "Cartesian",
             self.e0_si,
             self.e1_si,
             self.e2_si,
             self.e3_si,
+            None,
             self.u1_si,
             self.u2_si,
             self.u3_si,
@@ -365,7 +368,9 @@ class BoyerLindquistConversion(Conversion):
 
         alpha = BaseMetric.alpha(M=M, a=a)
 
-        return bl_to_cartesian_fast(
+        return convert_fast(
+            "BoyerLindquist",
+            "Cartesian",
             self.e0_si,
             self.e1_si,
             self.e2_si,

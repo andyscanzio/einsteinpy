@@ -79,13 +79,13 @@ class Cartesian(Coordinates, CartesianConversion):
 
         Parameters
         ----------
-        t : float
+        e0 : float
             Time
-        x : float
+        e1 : float
             x-Component of 3-Position
-        y : float
+        e2 : float
             y-Component of 3-Position
-        z : float
+        e3 : float
             z-Component of 3-Position
 
         """
@@ -107,9 +107,9 @@ class Cartesian(Coordinates, CartesianConversion):
             Spherical representation of the Cartesian Coordinates
 
         """
-        t, r, theta, phi = self.convert_spherical()
+        e0, e1, e2, e3 = self.convert_spherical()
 
-        return Spherical(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
+        return Spherical(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)
 
     def to_bl(self, **kwargs):
         """
@@ -140,92 +140,37 @@ class Cartesian(Coordinates, CartesianConversion):
 
         """
         M, a = kwargs["M"], kwargs["a"]
-        t, r, theta, phi = self.convert_bl(M=M, a=a)
+        e0, e1, e2, e3 = self.convert_bl(M=M, a=a)
 
-        return BoyerLindquist(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
+        return BoyerLindquist(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)
 
 
-class Spherical(SphericalConversion):
+class Spherical(Coordinates, SphericalConversion):
     """
     Class for defining 3-Position & 4-Position in Spherical Polar Coordinates \
     using SI units
 
     """
 
-    @u.quantity_input(t=u.s, r=u.m, theta=u.rad, phi=u.rad)
-    def __init__(self, t, r, theta, phi):
+    @u.quantity_input(e0=u.s, e1=u.m, e2=u.rad, e3=u.rad)
+    def __init__(self, e0, e1, e2, e3):
         """
         Constructor
 
         Parameters
         ----------
-        t : float
+        e0 : float
             Time
-        r : float
+        e1 : float
             r-Component of 3-Position
-        theta : float
+        e2 : float
             theta-Component of 3-Position
-        phi : float
+        e3 : float
             phi-Component of 3-Position
 
         """
-        super().__init__(t.si.value, r.si.value, theta.si.value, phi.si.value)
-        self.t = t
-        self.r = r
-        self.theta = theta
-        self.phi = phi
-        self.system = "Spherical"
-        self._dimension = {
-            "t": self.t,
-            "r": self.r,
-            "theta": self.theta,
-            "phi": self.phi,
-            "system": self.system,
-        }
-        self._dimension_order = ("t", "r", "theta", "phi")
-
-    def __str__(self):
-        return f"Spherical Polar Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
-
-    def __repr__(self):
-        return f"Spherical Polar Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
-
-    def __getitem__(self, item):
-        """
-        Method to return coordinates
-        Objects are subscriptable with both explicit names of \
-        parameters and integer indices
-
-        Parameters
-        ----------
-        item : str or int
-            Name of the parameter or its index
-            If ``system`` is provided, while initializing, \
-            name of the coordinate is returned
-
-        """
-        if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple :
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.t.si.value,
-            self.r.si.value,
-            self.theta.si.value,
-            self.phi.si.value,
-        )
+        SphericalConversion.__init__(self, e0.si.value, e1.si.value, e2.si.value, e3.si.value)
+        Coordinates.__init__(self, e0, e1, e2, e3, "Spherical", 't', 'r','theta','phi')
 
     def to_cartesian(self, **kwargs):
         """
@@ -242,9 +187,9 @@ class Spherical(SphericalConversion):
             Cartesian representation of the Spherical Polar Coordinates
 
         """
-        t, x, y, z = self.convert_cartesian()
+        e0, e1, e2, e3 = self.convert_cartesian()
 
-        return Cartesian(t * u.s, x * u.m, y * u.m, z * u.m)
+        return Cartesian(e0 * u.s, e1 * u.m, e2 * u.m, e3 * u.m)
 
     def to_bl(self, **kwargs):
         """
@@ -276,92 +221,37 @@ class Spherical(SphericalConversion):
 
         """
         M, a = kwargs["M"], kwargs["a"]
-        t, r, theta, phi = self.convert_bl(M=M, a=a)
+        e0, e1, e2, e3 = self.convert_bl(M=M, a=a)
 
-        return BoyerLindquist(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
+        return BoyerLindquist(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)
 
 
-class BoyerLindquist(BoyerLindquistConversion):
+class BoyerLindquist(Coordinates, BoyerLindquistConversion):
     """
     Class for defining 3-Position & 4-Position in Boyer-Lindquist Coordinates \
     using SI units
 
     """
 
-    @u.quantity_input(t=u.s, r=u.m, theta=u.rad, phi=u.rad)
-    def __init__(self, t, r, theta, phi):
+    @u.quantity_input(e0=u.s, e1=u.m, e2=u.rad, e3=u.rad)
+    def __init__(self, e0, e1, e2, e3):
         """
         Constructor
 
         Parameters
         ----------
-        t : float
+        e0 : float
             Time
-        r : float
+        e1 : float
             r-Component of 3-Position
-        theta : float
+        e2 : float
             theta-Component of 3-Position
-        phi : float
+        e3 : float
             phi-Component of 3-Position
 
         """
-        super().__init__(t.si.value, r.si.value, theta.si.value, phi.si.value)
-        self.t = t
-        self.r = r
-        self.theta = theta
-        self.phi = phi
-        self.system = "BoyerLindquist"
-        self._dimension = {
-            "t": self.t,
-            "r": self.r,
-            "theta": self.theta,
-            "phi": self.phi,
-            "system": self.system,
-        }
-        self._dimension_order = ("t", "r", "theta", "phi")
-
-    def __str__(self):
-        return f"Boyer-Lindquist Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
-
-    def __repr__(self):
-        return f"Boyer-Lindquist Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
-
-    def __getitem__(self, item):
-        """
-        Method to return coordinates
-        Objects are subscriptable with both explicit names of \
-        parameters and integer indices
-
-        Parameters
-        ----------
-        item : str or int
-            Name of the parameter or its index
-            If ``system`` is provided, while initializing, \
-            name of the coordinate is returned
-
-        """
-        if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple :
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.t.si.value,
-            self.r.si.value,
-            self.theta.si.value,
-            self.phi.si.value,
-        )
+        BoyerLindquistConversion.__init__(self, e0.si.value, e1.si.value, e2.si.value, e3.si.value)
+        Coordinates.__init__(self, e0, e1, e2, e3, "BoyerLindquist", 't', 'r','theta','phi')
 
     def to_cartesian(self, **kwargs):
         """
@@ -392,9 +282,9 @@ class BoyerLindquist(BoyerLindquistConversion):
 
         """
         M, a = kwargs["M"], kwargs["a"]
-        t, x, y, z = self.convert_cartesian(M=M, a=a)
+        e0, e1, e2, e3 = self.convert_cartesian(M=M, a=a)
 
-        return Cartesian(t * u.s, x * u.m, y * u.m, z * u.m)
+        return Cartesian(e0 * u.s, e1 * u.m, e2 * u.m, e3 * u.m)
 
     def to_spherical(self, **kwargs):
         """
@@ -426,6 +316,6 @@ class BoyerLindquist(BoyerLindquistConversion):
 
         """
         M, a = kwargs["M"], kwargs["a"]
-        t, r, theta, phi = self.convert_spherical(M=M, a=a)
+        e0, e1, e2, e3 = self.convert_spherical(M=M, a=a)
 
-        return Spherical(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
+        return Spherical(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)

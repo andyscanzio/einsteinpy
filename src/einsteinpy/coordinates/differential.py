@@ -13,67 +13,58 @@ from einsteinpy.utils import CoordinateError
 _c = constant.c.value
 
 
-class CartesianDifferential(CartesianConversion):
-    """
-    Class for defining 3-Velocity & 4-Velocity in Cartesian Coordinates \
-    using SI units
+class BaseDifferential:
+    def __init__(self, e0, e1, e2, e3, u1, u2, u3, system, name_e0, name_e1, name_e2, name_e3):
+        self.e0 = e0
+        self.e1 = e1
+        self.e2 = e2
+        self.e3 = e3
+        self._u0 = None
+        self.u1 = u1
+        self.u2 = u2
+        self.u3 = u3
+        self.system = system
+        self.name_map = {
+            name_e0: 'e0',
+            name_e1: 'e1',
+            name_e2: 'e2',
+            name_e3: 'e3',
+            f'v_{name_e0}': 'u0',
+            f'v_{name_e1}': 'u1',
+            f'v_{name_e2}': 'u2',
+            f'v_{name_e3}': 'u3',
+        }
+        self.name_list_e = [name_e0, name_e1, name_e2, name_e3]
+        self.name_list_u = [f'v_{name_e0}', f'v_{name_e1}', f'v_{name_e2}', f'v_{name_e3}']
 
-    """
 
-    @u.quantity_input(
-        t=u.s, x=u.m, y=u.m, z=u.m, v_x=u.m / u.s, v_y=u.m / u.s, v_z=u.m / u.s
-    )
-    def __init__(self, t, x, y, z, v_x, v_y, v_z):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        t : ~astropy.units.quantity.Quantity
-            Time
-        x : ~astropy.units.quantity.Quantity
-            x-Component of 3-Position
-        y : ~astropy.units.quantity.Quantity
-            y-Component of 3-Position
-        z : ~astropy.units.quantity.Quantity
-            z-Component of 3-Position
-        v_x : ~astropy.units.quantity.Quantity, optional
-            x-Component of 3-Velocity
-        v_y : ~astropy.units.quantity.Quantity, optional
-            y-Component of 3-Velocity
-        v_z : ~astropy.units.quantity.Quantity, optional
-            z-Component of 3-Velocity
-
-        """
-        super().__init__(
-            t.si.value,
-            x.si.value,
-            y.si.value,
-            z.si.value,
-            v_x.si.value,
-            v_y.si.value,
-            v_z.si.value,
+    def stringify(self):
+        values_e = ", ".join(
+            f"{name} = ({self.name_map.get(name)})" for name in self.name_list_e
         )
-        self.t = t
-        self.x = x
-        self.y = y
-        self.z = z
-        self._v_t = None
-        self.v_x = v_x
-        self.v_y = v_y
-        self.v_z = v_z
-        self.system = "Cartesian"
+        values_u = ", ".join(
+            f"{name}: {self.name_map.get(name)}" for name in self.name_list_u
+        )
+        return f"{self.system} Coordinates: \n \
+            {values_e}\n\
+            {values_u}"
 
-    def __str__(self):
-        return f"Cartesian Coordinates: \n\
-            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n\
-            v_t: {self.v_t}, v_x: {self.v_x}, v_y: {self.v_y}, v_z: {self.v_z}"
+    __str__ = stringify
+    __repr__ = stringify
 
-    def __repr__(self):
-        return f"Cartesian Coordinates: \n\
-            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n\
-            v_t: {self.v_t}, v_x: {self.v_x}, v_y: {self.v_y}, v_z: {self.v_z}"
 
+    def __getattr__(self, attr):
+        if attr in self.name_map:
+            return getattr(self, self.name_map[attr])
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{attr}'")
+    
+    def __setattr__(self, attr, value):
+        if 'name_map' in self.__dict__ and attr in self.name_map:
+            object.__setattr__(self, self.name_map[attr], value)
+        else:
+            object.__setattr__(self, attr, value)
+    
+    
     def position(self):
         """
         Returns Position 4-Vector in SI units
@@ -84,18 +75,18 @@ class CartesianDifferential(CartesianConversion):
             4-Tuple, containing Position 4-Vector in SI units
 
         """
-        return (_c * self.t.si.value, self.x.si.value, self.y.si.value, self.z.si.value)
+        return (_c * self.e0.si.value, self.e1.si.value, self.e2.si.value, self.e3.si.value)
 
     @property
-    def v_t(self):
+    def u0(self):
         """
         Returns the Timelike component of 4-Velocity
 
         """
         return self._v_t
 
-    @v_t.setter
-    def v_t(self, args):
+    @u0.setter
+    def u0(self, args):
         """
         Sets the value of the Time-like component of 4-Velocity
 
@@ -121,9 +112,9 @@ class CartesianDifferential(CartesianConversion):
 
         g_cov_mat = g.metric_covariant(self.position())
 
-        v_t = v0(g_cov_mat, self.v_x.si.value, self.v_y.si.value, self.v_z.si.value)
+        u0 = v0(g_cov_mat, self.u1.si.value, self.u2.si.value, self.u3.si.value)
 
-        self._v_t = v_t * u.m / u.s
+        self._u0 = u0 * u.m / u.s
 
     def velocity(self, metric):
         """
@@ -141,14 +132,51 @@ class CartesianDifferential(CartesianConversion):
 
         """
         # Setting _v_t
-        self.v_t = (metric,)
+        self.u0 = (metric,)
 
         return (
-            self._v_t.value,
-            self.v_x.si.value,
-            self.v_y.si.value,
-            self.v_z.si.value,
+            self._u0.value,
+            self.u1.si.value,
+            self.u2.si.value,
+            self.u3.si.value,
         )
+
+class CartesianDifferential(BaseDifferential, CartesianConversion):
+    """
+    Class for defining 3-Velocity & 4-Velocity in Cartesian Coordinates \
+    using SI units
+
+    """
+
+    @u.quantity_input(
+        e0=u.s, e1=u.m, e2=u.m, e3=u.m, u1=u.m / u.s, u2=u.m / u.s, u3=u.m / u.s
+    )
+    def __init__(self, e0, e1, e2, e3, u1, u2, u3):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        t : ~astropy.units.quantity.Quantity
+            Time
+        x : ~astropy.units.quantity.Quantity
+            x-Component of 3-Position
+        y : ~astropy.units.quantity.Quantity
+            y-Component of 3-Position
+        z : ~astropy.units.quantity.Quantity
+            z-Component of 3-Position
+        v_x : ~astropy.units.quantity.Quantity, optional
+            x-Component of 3-Velocity
+        v_y : ~astropy.units.quantity.Quantity, optional
+            y-Component of 3-Velocity
+        v_z : ~astropy.units.quantity.Quantity, optional
+            z-Component of 3-Velocity
+
+        """
+        CartesianConversion.__init__(
+            self, e0.si.value, e1.si.value, e2.si.value, e3.si.value, u1.si.value, u2.si.value, u3.si.value
+        )
+        BaseDifferential.__init__(self, e0, e1, e2, e3, u1, u2, u3, 'Cartesian', 't', 'x', 'y', 'z')
 
     def spherical_differential(self, **kwargs):
         """

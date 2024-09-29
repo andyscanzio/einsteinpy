@@ -16,9 +16,9 @@ def cartesian_coords():
         e1=10 / np.sqrt(2),
         e2=10 / np.sqrt(2),
         e3=0.,
-        u0=-190 / np.sqrt(2),
-        u1=210 / np.sqrt(2),
-        u2=200.
+        u1=-190 / np.sqrt(2),
+        u2=210 / np.sqrt(2),
+        u3=200.
     )
 
 
@@ -29,9 +29,9 @@ def spherical_coords():
         e1=10.,
         e2=np.pi / 2,
         e3=np.pi / 4,
-        u0=10.,
-        u1=-20.,
-        u2=20.
+        u1=10.,
+        u2=-20.,
+        u3=20.
     )
 
 
@@ -42,9 +42,9 @@ def bl_coords():
         e1=10.,
         e2=np.pi / 2,
         e3=np.pi / 4,
-        u0=10.,
-        u1=-20.,
-        u2=20.
+        u1=10.,
+        u2=-20.,
+        u3=20.
     )
 
 

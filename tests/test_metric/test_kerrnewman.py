@@ -19,13 +19,13 @@ def test_input():
     Test input for some functions below
     """
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=0.1 * u.m,
-        theta=4 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=0. * u.rad / u.s
+        e0=0. * u.s,
+        e1=0.1 * u.m,
+        e2=4 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=0. * u.rad / u.s
     )
 
     M = 1e23 * u.kg
@@ -85,13 +85,13 @@ def test_f_vec_bl_kerrnewman():
     M, a = 6.73317655e26 * u.kg, 0.2 * u.one
     Q, q = 0. * u.C, 0. * u.C / u.kg
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=1e6 * u.m,
-        theta=4 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=2e6 * u.rad / u.s
+        e0=0. * u.s,
+        e1=1e6 * u.m,
+        e2=4 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=2e6 * u.rad / u.s
     )
     f_vec_expected = np.array(
         [
@@ -185,13 +185,13 @@ def test_em_tensor_covariant():
     M, a, Q = 2e22 * u.kg, 0.5 * u.one, 10.0 * u.C
 
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=1.5 * u.m,
-        theta=3 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=0. * u.rad / u.s
+        e0=0. * u.s,
+        e1=1.5 * u.m,
+        e2=3 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=0. * u.rad / u.s
     )
 
     x_vec = bl.position()
@@ -237,13 +237,13 @@ def test_em_tensor_contravariant():
     M, a, Q = 1e22 * u.kg, 0.7 * u.one, 45.0 * u.C
 
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=5.5 * u.m,
-        theta=2 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=200. * u.m / u.s,
-        v_th=9. * u.rad / u.s,
-        v_p=10. * u.rad / u.s
+        e0=0. * u.s,
+        e1=5.5 * u.m,
+        e2=2 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=200. * u.m / u.s,
+        u2=9. * u.rad / u.s,
+        u3=10. * u.rad / u.s
     )
 
     x_vec = bl.position()

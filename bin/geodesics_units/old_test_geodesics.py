@@ -329,13 +329,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
     [
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=306.0 * u.m,
-                theta=np.pi / 2.05 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.0 * u.m / u.s,
-                v_th=0.0 * u.rad / u.s,
-                v_p=951.0 * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=306.0 * u.m,
+                e2=np.pi / 2.05 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.0 * u.m / u.s,
+                u2=0.0 * u.rad / u.s,
+                u3=951.0 * u.rad / u.s,
             ),
             4e24 * u.kg,
             2e-3 * u.one,
@@ -344,13 +344,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=1e3 * u.m,
-                theta=0.15 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.1 * _c * u.m / u.s,
-                v_th=0.5e-5 * _c * u.rad / u.s,
-                v_p=0.5e-4 * _c * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=1e3 * u.m,
+                e2=0.15 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.1 * _c * u.m / u.s,
+                u2=0.5e-5 * _c * u.rad / u.s,
+                u3=0.5e-4 * _c * u.rad / u.s,
             ),
             5.972e24 * u.kg,
             2e-3 * u.one,
@@ -359,13 +359,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=50e3 * u.m,
-                theta=np.pi / 2 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.1 * _c * u.m / u.s,
-                v_th=2e-7 * _c * u.rad / u.s,
-                v_p=1e-5 * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=50e3 * u.m,
+                e2=np.pi / 2 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.1 * _c * u.m / u.s,
+                u2=2e-7 * _c * u.rad / u.s,
+                u3=1e-5 * u.rad / u.s,
             ),
             5.972e24 * u.kg,
             0. * u.one,
@@ -412,13 +412,13 @@ def test_calculate_trajectory_kerr(
     [
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=306.0 * u.m,
-                theta=np.pi / 2.05 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.0 * u.m / u.s,
-                v_th=0.0 * u.rad / u.s,
-                v_p=951.0 * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=306.0 * u.m,
+                e2=np.pi / 2.05 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.0 * u.m / u.s,
+                u2=0.0 * u.rad / u.s,
+                u3=951.0 * u.rad / u.s,
             ),
             4e24 * u.kg,
             2e-3 * u.one,
@@ -427,13 +427,13 @@ def test_calculate_trajectory_kerr(
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=1e3 * u.m,
-                theta=0.15 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.1 * _c * u.m / u.s,
-                v_th=0.5e-5 * _c * u.rad / u.s,
-                v_p=0.5e-4 * _c * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=1e3 * u.m,
+                e2=0.15 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.1 * _c * u.m / u.s,
+                u2=0.5e-5 * _c * u.rad / u.s,
+                u3=0.5e-4 * _c * u.rad / u.s,
             ),
             5.972e24 * u.kg,
             2e-3 * u.one,
@@ -442,13 +442,13 @@ def test_calculate_trajectory_kerr(
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=50e3 * u.m,
-                theta=np.pi / 2 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.1 * _c * u.m / u.s,
-                v_th=2e-7 * _c * u.rad / u.s,
-                v_p=1e-5 * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=50e3 * u.m,
+                e2=np.pi / 2 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.1 * _c * u.m / u.s,
+                u2=2e-7 * _c * u.rad / u.s,
+                u3=1e-5 * u.rad / u.s,
             ),
             5.972e24 * u.kg,
             0. * u.one,
@@ -540,13 +540,13 @@ def test_calculate_trajectory3_kerr():
     [
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=306.0 * u.m,
-                theta=np.pi / 2 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.0 * u.m / u.s,
-                v_th=0.1 * u.rad / u.s,
-                v_p=951.0 * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=306.0 * u.m,
+                e2=np.pi / 2 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.0 * u.m / u.s,
+                u2=0.1 * u.rad / u.s,
+                u3=951.0 * u.rad / u.s,
             ),
             4e24 * u.kg,
             2e-3 * u.one,
@@ -557,13 +557,13 @@ def test_calculate_trajectory3_kerr():
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0 * u.s,
-                r=1e3 * u.m,
-                theta=0.15 * u.rad,
-                phi=np.pi / 2 * u.rad,
-                v_r=0.2 * _c * u.m / u.s,
-                v_th=0.5e-5 * _c * u.rad / u.s,
-                v_p=1e-4 * _c * u.rad / u.s,
+                e0=0.0 * u.s,
+                e1=1e3 * u.m,
+                e2=0.15 * u.rad,
+                e3=np.pi / 2 * u.rad,
+                u1=0.2 * _c * u.m / u.s,
+                u2=0.5e-5 * _c * u.rad / u.s,
+                u3=1e-4 * _c * u.rad / u.s,
             ),
             5.972e24 * u.kg,
             0. * u.one,
@@ -604,13 +604,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
     a = 0. * u.one
 
     bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=306.0 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=np.pi / 2 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.01 * u.rad / u.s,
-        v_p=10.0 * u.rad / u.s,
+        e0=0.0 * u.s,
+        e1=306.0 * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=np.pi / 2 * u.rad,
+        u1=0.0 * u.m / u.s,
+        u2=0.01 * u.rad / u.s,
+        u3=10.0 * u.rad / u.s,
     )
 
     mk = Kerr(coords=bl, M=M, a=a)
@@ -698,13 +698,13 @@ def test_calculate_trajectory1_kerrnewman():
     step_size = 0.5
 
     bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=r * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=0.0 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,
+        e0=0.0 * u.s,
+        e1=r * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=0.0 * u.rad,
+        u1=0.0 * u.m / u.s,
+        u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
     mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
@@ -738,13 +738,13 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     M = 0.5 * 5.972e24 * u.kg
 
     bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=1e6 * u.m,
-        theta=0.6 * np.pi * u.rad,
-        phi=np.pi / 8 * u.rad,
-        v_r=1e4 * u.m / u.s,
-        v_th=-0.01 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,
+        e0=0.0 * u.s,
+        e1=1e6 * u.m,
+        e2=0.6 * np.pi * u.rad,
+        e3=np.pi / 8 * u.rad,
+        u1=1e4 * u.m / u.s,
+        u2=-0.01 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
     mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
@@ -818,13 +818,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
     q = 0. * u.C / u.kg
 
     bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=306.0 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=np.pi / 2 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=-0.01 * u.rad / u.s,
-        v_p=10.0 * u.rad / u.s,
+        e0=0.0 * u.s,
+        e1=306.0 * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=np.pi / 2 * u.rad,
+        u1=0.0 * u.m / u.s,
+        u2=-0.01 * u.rad / u.s,
+        u3=10.0 * u.rad / u.s,
     )
 
     mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)

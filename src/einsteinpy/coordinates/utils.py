@@ -40,6 +40,7 @@ def cartesian_to_spherical_novel(e0, e1, e2, e3, alpha):
 
     return e0, sph_e1, sph_e2, sph_e3
 
+
 @jit
 def cartesian_to_bl(e0, e1, e2, e3, alpha, u1, u2, u3):
     """
@@ -59,7 +60,9 @@ def cartesian_to_bl(e0, e1, e2, e3, alpha, u1, u2, u3):
             / (2 * np.sqrt((w**2) + (4 * (alpha**2) * (e3**2))))
         )
     )
-    bl_u2 = (-1 / np.sqrt(1 - np.square(e3 / bl_e0))) * ((u3 * bl_e0 - bl_u1 * e3) / (bl_e0**2))
+    bl_u2 = (-1 / np.sqrt(1 - np.square(e3 / bl_e0))) * (
+        (u3 * bl_e0 - bl_u1 * e3) / (bl_e0**2)
+    )
     bl_u3 = (1 / (1 + np.square(e2 / e1))) * ((u2 * e1 - u1 * e2) / (e1**2))
 
     return e0, bl_e0, bl_e1, bl_e2, bl_u1, bl_u2, bl_u3
@@ -161,14 +164,27 @@ def bl_to_cartesian_novel(e0, e1, e2, e3, alpha):
 
     return e0, car_e1, car_e2, car_e3
 
-conversion_map = {('Cartesian', 'Spherical'):(cartesian_to_spherical, cartesian_to_spherical_novel),
-                  ('Cartesian', 'BoyerLindquist'):(cartesian_to_bl, cartesian_to_bl_novel),
-                  ('Spherical', 'Cartesian'):(spherical_to_cartesian, spherical_to_cartesian_novel),
-                  ('BoyerLindquist', 'Cartesian'):(bl_to_cartesian, bl_to_cartesian_novel),
-                  }
+
+conversion_map = {
+    ("Cartesian", "Spherical"): (cartesian_to_spherical, cartesian_to_spherical_novel),
+    ("Cartesian", "BoyerLindquist"): (cartesian_to_bl, cartesian_to_bl_novel),
+    ("Spherical", "Cartesian"): (spherical_to_cartesian, spherical_to_cartesian_novel),
+    ("BoyerLindquist", "Cartesian"): (bl_to_cartesian, bl_to_cartesian_novel),
+}
+
 
 def convert_fast(
-    from_system, to_system, e0, e1, e2, e3, alpha, u1=None, u2=None, u3=None, velocities_provided=False
+    from_system,
+    to_system,
+    e0,
+    e1,
+    e2,
+    e3,
+    alpha,
+    u1=None,
+    u2=None,
+    u3=None,
+    velocities_provided=False,
 ):
     convert, convert_novel = conversion_map.get((from_system, to_system))
     if velocities_provided:

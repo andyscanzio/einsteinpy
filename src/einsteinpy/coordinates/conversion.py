@@ -1,10 +1,11 @@
 from einsteinpy.coordinates.utils import convert_fast
 from einsteinpy.metric import BaseMetric
 
+
 class Conversion:
     """
     Base-Class for all for all of the conversion classes
-    
+
     """
 
     def __init__(self, e0, e1, e2, e3, u1=None, u2=None, u3=None):
@@ -15,9 +16,7 @@ class Conversion:
         self.u1_si = u1
         self.u2_si = u2
         self.u3_si = u3
-        self._velocities_provided = not (
-            (u1 is None) or (u2 is None) or (u3 is None)
-        )
+        self._velocities_provided = not ((u1 is None) or (u2 is None) or (u3 is None))
 
     def values(self):
         if self._velocities_provided:
@@ -32,7 +31,22 @@ class Conversion:
             )
 
         return self.e0_si, self.e1_si, self.e2_si, self.e3_si
-    
+
+    def convert(self, from_system, to_system, alpha=None):
+        return convert_fast(
+            from_system,
+            to_system,
+            self.e0_si,
+            self.e1_si,
+            self.e2_si,
+            self.e3_si,
+            alpha,
+            self.u1_si,
+            self.u2_si,
+            self.u3_si,
+            self._velocities_provided,
+        )
+
 
 class CartesianConversion(Conversion):
     """
@@ -94,19 +108,7 @@ class CartesianConversion(Conversion):
             Spherical Polar Coordinates
 
         """
-        return convert_fast(
-            "Cartesian",
-            "Spherical",
-            self.e0_si,
-            self.e1_si,
-            self.e2_si,
-            self.e3_si,
-            None,
-            self.u1_si,
-            self.u2_si,
-            self.u3_si,
-            self._velocities_provided,
-        )
+        return super().convert("Cartesian", "Spherical")
 
     def convert_bl(self, **kwargs):
         """
@@ -149,19 +151,7 @@ class CartesianConversion(Conversion):
 
         alpha = BaseMetric.alpha(M=M, a=a)
 
-        return convert_fast(
-            "Cartesian",
-            "BoyerLindquist",
-            self.e0_si,
-            self.e1_si,
-            self.e2_si,
-            self.e3_si,
-            alpha,
-            self.u1_si,
-            self.u2_si,
-            self.u3_si,
-            self._velocities_provided,
-        )
+        return super().convert("Cartesian", "BoyerLindquist", alpha)
 
 
 class SphericalConversion(Conversion):
@@ -224,19 +214,7 @@ class SphericalConversion(Conversion):
             Cartesian Coordinates
 
         """
-        return convert_fast(
-            "Spherical",
-            "Cartesian",
-            self.e0_si,
-            self.e1_si,
-            self.e2_si,
-            self.e3_si,
-            None,
-            self.u1_si,
-            self.u2_si,
-            self.u3_si,
-            self._velocities_provided,
-        )
+        return super().convert("Spherical", "Cartesian")
 
     def convert_bl(self, **kwargs):
         """
@@ -368,19 +346,7 @@ class BoyerLindquistConversion(Conversion):
 
         alpha = BaseMetric.alpha(M=M, a=a)
 
-        return convert_fast(
-            "BoyerLindquist",
-            "Cartesian",
-            self.e0_si,
-            self.e1_si,
-            self.e2_si,
-            self.e3_si,
-            alpha,
-            self.u1_si,
-            self.u2_si,
-            self.u3_si,
-            self._velocities_provided,
-        )
+        return super().convert("BoyerLindquist", "Cartesian", alpha)
 
     def convert_spherical(self, **kwargs):
         """

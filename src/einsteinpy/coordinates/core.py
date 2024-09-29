@@ -18,17 +18,24 @@ class Coordinates:
         self.e2 = e2
         self.e3 = e3
         self.system = system
-        self.name_map = {name_e0 : self.e0, name_e1: self.e1, name_e2: self.e2, name_e3: self.e3}
+        self.name_map = {
+            name_e0: self.e0,
+            name_e1: self.e1,
+            name_e2: self.e2,
+            name_e3: self.e3,
+        }
         self.name_list = [name_e0, name_e1, name_e2, name_e3]
 
     def stringify(self):
-        values = ', '.join(f"{name} = ({value})" for name, value in self.name_map.items())
+        values = ", ".join(
+            f"{name} = ({value})" for name, value in self.name_map.items()
+        )
         return f"{self.system} Coordinates: \n \
             {values}"
-            
+
     __str__ = stringify
     __repr__ = stringify
-    
+
     def __getitem__(self, item):
         """
         Method to return coordinates
@@ -46,11 +53,10 @@ class Coordinates:
         if isinstance(item, (int, np.integer)):
             return self.name_map[self.name_list[item]]
         return self.name_map[item]
-    
-    
+
     def __getattr__(self, name):
         return self.name_map.get(name)
-    
+
     def position(self):
         """
         Returns Position 4-Vector in SI units
@@ -61,9 +67,13 @@ class Coordinates:
             4-Tuple, containing Position 4-Vector in SI units
 
         """
-        return (_c * self.e0.si.value, self.e1.si.value, self.e2.si.value, self.e3.si.value)
-        
-        
+        return (
+            _c * self.e0.si.value,
+            self.e1.si.value,
+            self.e2.si.value,
+            self.e3.si.value,
+        )
+
 
 class Cartesian(Coordinates, CartesianConversion):
     """
@@ -89,8 +99,10 @@ class Cartesian(Coordinates, CartesianConversion):
             z-Component of 3-Position
 
         """
-        CartesianConversion.__init__(self, e0.si.value, e1.si.value, e2.si.value, e3.si.value)
-        Coordinates.__init__(self, e0, e1, e2, e3, "Cartesian", 't', 'x','y','z')
+        CartesianConversion.__init__(
+            self, e0.si.value, e1.si.value, e2.si.value, e3.si.value
+        )
+        Coordinates.__init__(self, e0, e1, e2, e3, "Cartesian", "t", "x", "y", "z")
 
     def to_spherical(self, **kwargs):
         """
@@ -169,8 +181,12 @@ class Spherical(Coordinates, SphericalConversion):
             phi-Component of 3-Position
 
         """
-        SphericalConversion.__init__(self, e0.si.value, e1.si.value, e2.si.value, e3.si.value)
-        Coordinates.__init__(self, e0, e1, e2, e3, "Spherical", 't', 'r','theta','phi')
+        SphericalConversion.__init__(
+            self, e0.si.value, e1.si.value, e2.si.value, e3.si.value
+        )
+        Coordinates.__init__(
+            self, e0, e1, e2, e3, "Spherical", "t", "r", "theta", "phi"
+        )
 
     def to_cartesian(self, **kwargs):
         """
@@ -250,8 +266,12 @@ class BoyerLindquist(Coordinates, BoyerLindquistConversion):
             phi-Component of 3-Position
 
         """
-        BoyerLindquistConversion.__init__(self, e0.si.value, e1.si.value, e2.si.value, e3.si.value)
-        Coordinates.__init__(self, e0, e1, e2, e3, "BoyerLindquist", 't', 'r','theta','phi')
+        BoyerLindquistConversion.__init__(
+            self, e0.si.value, e1.si.value, e2.si.value, e3.si.value
+        )
+        Coordinates.__init__(
+            self, e0, e1, e2, e3, "BoyerLindquist", "t", "r", "theta", "phi"
+        )
 
     def to_cartesian(self, **kwargs):
         """

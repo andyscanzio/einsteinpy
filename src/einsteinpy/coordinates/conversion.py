@@ -2,7 +2,7 @@ from einsteinpy.coordinates.utils import convert_fast
 from einsteinpy.metric import BaseMetric
 
 
-class Conversion:
+class BaseConversion:
     """
     Base-Class for all for all of the conversion classes
 
@@ -48,7 +48,7 @@ class Conversion:
         )
 
 
-class CartesianConversion(Conversion):
+class CartesianConversion(BaseConversion):
     """
     Class for conversion to and from Cartesian Coordinates in SI units
 
@@ -154,7 +154,7 @@ class CartesianConversion(Conversion):
         return super().convert("Cartesian", "BoyerLindquist", alpha)
 
 
-class SphericalConversion(Conversion):
+class SphericalConversion(BaseConversion):
     """
     Class for conversion to and from Spherical Polar Coordinates in SI units
 
@@ -261,7 +261,7 @@ class SphericalConversion(Conversion):
         return cart.convert_bl(M=M, a=a)
 
 
-class BoyerLindquistConversion(Conversion):
+class BoyerLindquistConversion(BaseConversion):
     """
     Class for conversion to and from Boyer-Lindquist Coordinates in SI units
 

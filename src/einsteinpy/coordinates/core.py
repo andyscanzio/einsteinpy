@@ -11,7 +11,7 @@ from einsteinpy.coordinates.conversion import (
 _c = constant.c.value
 
 
-class Coordinates:
+class BaseCoordinates:
     def __init__(self, e0, e1, e2, e3, system, name_e0, name_e1, name_e2, name_e3):
         self.e0 = e0
         self.e1 = e1
@@ -75,7 +75,7 @@ class Coordinates:
         )
 
 
-class Cartesian(Coordinates, CartesianConversion):
+class Cartesian(BaseCoordinates, CartesianConversion):
     """
     Class for defining 3-Position & 4-Position in Cartesian Coordinates \
     using SI units
@@ -102,7 +102,7 @@ class Cartesian(Coordinates, CartesianConversion):
         CartesianConversion.__init__(
             self, e0.si.value, e1.si.value, e2.si.value, e3.si.value
         )
-        Coordinates.__init__(self, e0, e1, e2, e3, "Cartesian", "t", "x", "y", "z")
+        BaseCoordinates.__init__(self, e0, e1, e2, e3, "Cartesian", "t", "x", "y", "z")
 
     def to_spherical(self, **kwargs):
         """
@@ -157,7 +157,7 @@ class Cartesian(Coordinates, CartesianConversion):
         return BoyerLindquist(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)
 
 
-class Spherical(Coordinates, SphericalConversion):
+class Spherical(BaseCoordinates, SphericalConversion):
     """
     Class for defining 3-Position & 4-Position in Spherical Polar Coordinates \
     using SI units
@@ -184,7 +184,7 @@ class Spherical(Coordinates, SphericalConversion):
         SphericalConversion.__init__(
             self, e0.si.value, e1.si.value, e2.si.value, e3.si.value
         )
-        Coordinates.__init__(
+        BaseCoordinates.__init__(
             self, e0, e1, e2, e3, "Spherical", "t", "r", "theta", "phi"
         )
 
@@ -242,7 +242,7 @@ class Spherical(Coordinates, SphericalConversion):
         return BoyerLindquist(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)
 
 
-class BoyerLindquist(Coordinates, BoyerLindquistConversion):
+class BoyerLindquist(BaseCoordinates, BoyerLindquistConversion):
     """
     Class for defining 3-Position & 4-Position in Boyer-Lindquist Coordinates \
     using SI units
@@ -269,7 +269,7 @@ class BoyerLindquist(Coordinates, BoyerLindquistConversion):
         BoyerLindquistConversion.__init__(
             self, e0.si.value, e1.si.value, e2.si.value, e3.si.value
         )
-        Coordinates.__init__(
+        BaseCoordinates.__init__(
             self, e0, e1, e2, e3, "BoyerLindquist", "t", "r", "theta", "phi"
         )
 

@@ -7,195 +7,195 @@ _c = constant.c.value
 
 
 def cartesian_to_spherical_fast(
-    t, x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
+    e0, e1, e2, e3, u1=None, u2=None, u3=None, velocities_provided=False
 ):
     if velocities_provided:
-        return cartesian_to_spherical(t, x, y, z, v_x, v_y, v_z)
-    return cartesian_to_spherical_novel(t, x, y, z)
+        return cartesian_to_spherical(e0, e1, e2, e3, u1, u2, u3)
+    return cartesian_to_spherical_novel(e0, e1, e2, e3)
 
 
 @jit
-def cartesian_to_spherical(t, x, y, z, v_x, v_y, v_z):
+def cartesian_to_spherical(e0, e1, e2, e3, u1, u2, u3):
     """
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    hxy = np.hypot(x, y)
-    r = np.hypot(hxy, z)
-    theta = np.arctan2(hxy, z)
-    phi = np.arctan2(y, x)
-    n1 = x**2 + y**2
-    n2 = n1 + z**2
-    v_r = (x * v_x + y * v_y + z * v_z) / np.sqrt(n2)
-    v_th = (z * (x * v_x + y * v_y) - n1 * v_z) / (n2 * np.sqrt(n1))
-    v_p = -1 * (v_x * y - x * v_y) / n1
+    hyp = np.hypot(e1, e2)
+    sph_e1 = np.hypot(hyp, e3)
+    sph_e2 = np.arctan2(hyp, e3)
+    sph_e3 = np.arctan2(e2, e1)
+    n1 = e1**2 + e2**2
+    n2 = n1 + e3**2
+    sph_u1 = (e1 * u1 + e2 * u2 + e3 * u3) / np.sqrt(n2)
+    sph_u2 = (e3 * (e1 * u1 + e2 * u2) - n1 * u3) / (n2 * np.sqrt(n1))
+    sph_u3 = -1 * (u1 * e2 - e1 * u2) / n1
 
-    return t, r, theta, phi, v_r, v_th, v_p
+    return e0, sph_e1, sph_e2, sph_e3, sph_u1, sph_u2, sph_u3
 
 
 @jit
-def cartesian_to_spherical_novel(t, x, y, z):
+def cartesian_to_spherical_novel(e0, e1, e2, e3):
     """
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    hxy = np.hypot(x, y)
-    r = np.hypot(hxy, z)
-    theta = np.arctan2(hxy, z)
-    phi = np.arctan2(y, x)
+    hyp = np.hypot(e1, e2)
+    sph_e1 = np.hypot(hyp, e3)
+    sph_e2 = np.arctan2(hyp, e3)
+    sph_e3 = np.arctan2(e2, e1)
 
-    return t, r, theta, phi
+    return e0, sph_e1, sph_e2, sph_e3
 
 
 def cartesian_to_bl_fast(
-    t, x, y, z, alpha, v_x=None, v_y=None, v_z=None, velocities_provided=False
+    e0, e1, e2, e3, alpha, u1=None, u2=None, u3=None, velocities_provided=False
 ):
     if velocities_provided:
-        return cartesian_to_bl(t, x, y, z, alpha, v_x, v_y, v_z)
-    return cartesian_to_bl_novel(t, x, y, z, alpha)
+        return cartesian_to_bl(e0, e1, e2, e3, alpha, u1, u2, u3)
+    return cartesian_to_bl_novel(e0, e1, e2, e3, alpha)
 
 
 @jit
-def cartesian_to_bl(t, x, y, z, alpha, v_x, v_y, v_z):
+def cartesian_to_bl(e0, e1, e2, e3, alpha, u1, u2, u3):
     """
     Utility function (jitted) to convert cartesian to boyer lindquist.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    w = (x**2 + y**2 + z**2) - (alpha**2)
-    r = np.sqrt(0.5 * (w + np.sqrt((w**2) + (4 * (alpha**2) * (z**2)))))
-    theta = np.arccos(z / r)
-    phi = np.arctan2(y, x)
-    dw_dt = 2 * (x * v_x + y * v_y + z * v_z)
-    v_r = (1 / (2 * r)) * (
+    w = (e1**2 + e2**2 + e3**2) - (alpha**2)
+    bl_e0 = np.sqrt(0.5 * (w + np.sqrt((w**2) + (4 * (alpha**2) * (e3**2)))))
+    bl_e1 = np.arccos(e3 / bl_e0)
+    bl_e2 = np.arctan2(e2, e1)
+    dw_dt = 2 * (e1 * u1 + e2 * u2 + e3 * u3)
+    bl_u1 = (1 / (2 * bl_e0)) * (
         (dw_dt / 2)
         + (
-            (w * dw_dt + 4 * (alpha**2) * z * v_z)
-            / (2 * np.sqrt((w**2) + (4 * (alpha**2) * (z**2))))
+            (w * dw_dt + 4 * (alpha**2) * e3 * u3)
+            / (2 * np.sqrt((w**2) + (4 * (alpha**2) * (e3**2))))
         )
     )
-    v_th = (-1 / np.sqrt(1 - np.square(z / r))) * ((v_z * r - v_r * z) / (r**2))
-    v_p = (1 / (1 + np.square(y / x))) * ((v_y * x - v_x * y) / (x**2))
+    bl_u2 = (-1 / np.sqrt(1 - np.square(e3 / bl_e0))) * ((u3 * bl_e0 - bl_u1 * e3) / (bl_e0**2))
+    bl_u3 = (1 / (1 + np.square(e2 / e1))) * ((u2 * e1 - u1 * e2) / (e1**2))
 
-    return t, r, theta, phi, v_r, v_th, v_p
+    return e0, bl_e0, bl_e1, bl_e2, bl_u1, bl_u2, bl_u3
 
 
 @jit
-def cartesian_to_bl_novel(t, x, y, z, alpha):
+def cartesian_to_bl_novel(e0, e1, e2, e3, alpha):
     """
     Utility function (jitted) to convert cartesian to boyer lindquist.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    w = (x**2 + y**2 + z**2) - (alpha**2)
-    r = np.sqrt(0.5 * (w + np.sqrt((w**2) + (4 * (alpha**2) * (z**2)))))
-    theta = np.arccos(z / r)
-    phi = np.arctan2(y, x)
+    w = (e1**2 + e2**2 + e3**2) - (alpha**2)
+    bl_e1 = np.sqrt(0.5 * (w + np.sqrt((w**2) + (4 * (alpha**2) * (e3**2)))))
+    bl_e2 = np.arccos(e3 / bl_e1)
+    bl_e3 = np.arctan2(e2, e1)
 
-    return t, r, theta, phi
+    return e0, bl_e1, bl_e2, bl_e3
 
 
 def spherical_to_cartesian_fast(
-    t, r, th, p, v_r=None, v_th=None, v_p=None, velocities_provided=False
+    e0, e1, e2, e3, u1=None, u2=None, u3=None, velocities_provided=False
 ):
     if velocities_provided:
-        return spherical_to_cartesian(t, r, th, p, v_r, v_th, v_p)
-    return spherical_to_cartesian_novel(t, r, th, p)
+        return spherical_to_cartesian(e0, e1, e2, e3, u1, u2, u3)
+    return spherical_to_cartesian_novel(e0, e1, e2, e3)
 
 
 @jit
-def spherical_to_cartesian(t, r, th, p, v_r, v_th, v_p):
+def spherical_to_cartesian(e0, e1, e2, e3, u1, u2, u3):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    x = r * np.cos(p) * np.sin(th)
-    y = r * np.sin(p) * np.sin(th)
-    z = r * np.cos(th)
-    v_x = (
-        np.sin(th) * np.cos(p) * v_r
-        - r * np.sin(th) * np.sin(p) * v_p
-        + r * np.cos(th) * np.cos(p) * v_th
+    car_e1 = e1 * np.cos(e3) * np.sin(e2)
+    car_e2 = e1 * np.sin(e3) * np.sin(e2)
+    car_e3 = e1 * np.cos(e2)
+    car_u1 = (
+        np.sin(e2) * np.cos(e3) * u1
+        - e1 * np.sin(e2) * np.sin(e3) * u3
+        + e1 * np.cos(e2) * np.cos(e3) * u2
     )
-    v_y = (
-        np.sin(th) * np.sin(p) * v_r
-        + r * np.cos(th) * np.sin(p) * v_th
-        + r * np.sin(th) * np.cos(p) * v_p
+    car_u2 = (
+        np.sin(e2) * np.sin(e3) * u1
+        + e1 * np.cos(e2) * np.sin(e3) * u2
+        + e1 * np.sin(e2) * np.cos(e3) * u3
     )
-    v_z = np.cos(th) * v_r - r * np.sin(th) * v_th
+    car_u3 = np.cos(e2) * u1 - e1 * np.sin(e2) * u2
 
-    return t, x, y, z, v_x, v_y, v_z
+    return e0, car_e1, car_e2, car_e3, car_u1, car_u2, car_u3
 
 
 @jit
-def spherical_to_cartesian_novel(t, r, th, p):
+def spherical_to_cartesian_novel(e0, e1, e2, e3):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    x = r * np.cos(p) * np.sin(th)
-    y = r * np.sin(p) * np.sin(th)
-    z = r * np.cos(th)
+    car_e1 = e1 * np.cos(e3) * np.sin(e2)
+    car_e2 = e1 * np.sin(e3) * np.sin(e2)
+    car_e3 = e1 * np.cos(e2)
 
-    return t, x, y, z
+    return e0, car_e1, car_e2, car_e3
 
 
 def bl_to_cartesian_fast(
-    t, r, th, p, alpha, v_r=None, v_th=None, v_p=None, velocities_provided=False
+    e0, e1, e2, e3, alpha, u1=None, u2=None, u3=None, velocities_provided=False
 ):
     if velocities_provided:
-        return bl_to_cartesian(t, r, th, p, alpha, v_r, v_th, v_p)
-    return bl_to_cartesian_novel(t, r, th, p, alpha)
+        return bl_to_cartesian(e0, e1, e2, e3, alpha, u1, u2, u3)
+    return bl_to_cartesian_novel(e0, e1, e2, e3, alpha)
 
 
 @jit
-def bl_to_cartesian(t, r, th, p, alpha, v_r, v_th, v_p):
+def bl_to_cartesian(e0, e1, e2, e3, alpha, u1, u2, u3):
     """
     Utility function (jitted) to convert bl to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    xa = np.sqrt(r**2 + alpha**2)
-    sin_norm = xa * np.sin(th)
-    x = sin_norm * np.cos(p)
-    y = sin_norm * np.sin(p)
-    z = r * np.cos(th)
-    v_x = (
-        (r * v_r * np.sin(th) * np.cos(p) / xa)
-        + (xa * np.cos(th) * np.cos(p) * v_th)
-        - (xa * np.sin(th) * np.sin(p) * v_p)
+    xa = np.sqrt(e1**2 + alpha**2)
+    sin_norm = xa * np.sin(e2)
+    car_e1 = sin_norm * np.cos(e3)
+    car_e2 = sin_norm * np.sin(e3)
+    car_e3 = e1 * np.cos(e2)
+    car_u1 = (
+        (e1 * u1 * np.sin(e2) * np.cos(e3) / xa)
+        + (xa * np.cos(e2) * np.cos(e3) * u2)
+        - (xa * np.sin(e2) * np.sin(e3) * u3)
     )
-    v_y = (
-        (r * v_r * np.sin(th) * np.sin(p) / xa)
-        + (xa * np.cos(th) * np.sin(p) * v_th)
-        + (xa * np.sin(th) * np.cos(p) * v_p)
+    car_u2 = (
+        (e1 * u1 * np.sin(e2) * np.sin(e3) / xa)
+        + (xa * np.cos(e2) * np.sin(e3) * u2)
+        + (xa * np.sin(e2) * np.cos(e3) * u3)
     )
-    v_z = (v_r * np.cos(th)) - (r * np.sin(th) * v_th)
+    car_u3 = (u1 * np.cos(e2)) - (e1 * np.sin(e2) * u2)
 
-    return t, x, y, z, v_x, v_y, v_z
+    return e0, car_e1, car_e2, car_e3, car_u1, car_u2, car_u3
 
 
 @jit
-def bl_to_cartesian_novel(t, r, th, p, alpha):
+def bl_to_cartesian_novel(e0, e1, e2, e3, alpha):
     """
     Utility function (jitted) to convert bl to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    xa = np.sqrt(r**2 + alpha**2)
-    sin_norm = xa * np.sin(th)
-    x = sin_norm * np.cos(p)
-    y = sin_norm * np.sin(p)
-    z = r * np.cos(th)
+    xa = np.sqrt(e1**2 + alpha**2)
+    sin_norm = xa * np.sin(e2)
+    car_e1 = sin_norm * np.cos(e3)
+    car_e2 = sin_norm * np.sin(e3)
+    car_e3 = e1 * np.cos(e2)
 
-    return t, x, y, z
+    return e0, car_e1, car_e2, car_e3
 
 
-def lorentz_factor(v1, v2, v3):
+def lorentz_factor(u1, u2, u3):
     """
     Returns the Lorentz Factor, ``gamma``
 
@@ -214,15 +214,15 @@ def lorentz_factor(v1, v2, v3):
         Lorentz Factor
 
     """
-    v_vec = np.array([v1, v2, v3])
-    v_norm2 = v_vec.dot(v_vec)
-    gamma = 1 / np.sqrt(1 - v_norm2 / _c**2)
+    u_vec = np.array([u1, u2, u3])
+    u_norm2 = u_vec.dot(u_vec)
+    gamma = 1 / np.sqrt(1 - u_norm2 / _c**2)
 
     return gamma
 
 
 @jit
-def v0(g_cov_mat, v1, v2, v3):
+def v0(g_cov_mat, u1, u2, u3):
     """
     Utility function to return Timelike component (v0) of 4-Velocity
     Assumes a (+, -, -, -) Metric Signature
@@ -250,15 +250,15 @@ def v0(g_cov_mat, v1, v2, v3):
     fac = -1 * _c**2
     # Defining coefficients for quadratic equation
     A = g[0, 0]
-    B = 2 * (g[0, 1] * v1 + g[0, 2] * v2 + g[0, 3] * v3)
+    B = 2 * (g[0, 1] * u1 + g[0, 2] * u2 + g[0, 3] * u3)
     C = (
-        (g[1, 1] * v1**2 + g[2, 2] * v2**2 + g[3, 3] * v3**2)
-        + 2 * v1 * (g[1, 2] * v2 + g[1, 3] * v3)
-        + 2 * v2 * g[2, 3] * v3
+        (g[1, 1] * u1**2 + g[2, 2] * u2**2 + g[3, 3] * u3**2)
+        + 2 * u1 * (g[1, 2] * u2 + g[1, 3] * u3)
+        + 2 * u2 * g[2, 3] * u3
         + fac
     )
     D = (B**2) - (4 * A * C)
 
-    v_t = (-B + np.sqrt(D)) / (2 * A)
+    u0 = (-B + np.sqrt(D)) / (2 * A)
 
-    return v_t
+    return u0

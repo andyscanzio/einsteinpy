@@ -11,53 +11,24 @@ from einsteinpy.coordinates.conversion import (
 _c = constant.c.value
 
 
-class Cartesian(CartesianConversion):
-    """
-    Class for defining 3-Position & 4-Position in Cartesian Coordinates \
-    using SI units
+class Coordinates:
+    def __init__(self, e0, e1, e2, e3, system, name_e0, name_e1, name_e2, name_e3):
+        self.e0 = e0
+        self.e1 = e1
+        self.e2 = e2
+        self.e3 = e3
+        self.system = system
+        self.name_map = {name_e0 : self.e0, name_e1: self.e1, name_e2: self.e2, name_e3: self.e3}
+        self.name_list = [name_e0, name_e1, name_e2, name_e3]
 
-    """
-
-    @u.quantity_input(t=u.s, x=u.m, y=u.m, z=u.m)
-    def __init__(self, t, x, y, z):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        t : float
-            Time
-        x : float
-            x-Component of 3-Position
-        y : float
-            y-Component of 3-Position
-        z : float
-            z-Component of 3-Position
-
-        """
-        super().__init__(t.si.value, x.si.value, y.si.value, z.si.value)
-        self.t = t
-        self.x = x
-        self.y = y
-        self.z = z
-        self.system = "Cartesian"
-        self._dimension = {
-            "t": self.t,
-            "x": self.x,
-            "y": self.y,
-            "z": self.z,
-            "system": self.system,
-        }
-        self._dimension_order = ("t", "x", "y", "z")
-
-    def __str__(self):
-        return f"Cartesian Coordinates: \n \
-            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})"
-
-    def __repr__(self):
-        return f"Cartesian Coordinates: \n \
-            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})"
-
+    def stringify(self):
+        values = ', '.join(f"{name} = ({value})" for name, value in self.name_map.items())
+        return f"{self.system} Coordinates: \n \
+            {values}"
+            
+    __str__ = stringify
+    __repr__ = stringify
+    
     def __getitem__(self, item):
         """
         Method to return coordinates
@@ -73,9 +44,13 @@ class Cartesian(CartesianConversion):
 
         """
         if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
+            return self.name_map[self.name_list[item]]
+        return self.name_map[item]
+    
+    
+    def __getattr__(self, name):
+        return self.name_map.get(name)
+    
     def position(self):
         """
         Returns Position 4-Vector in SI units
@@ -86,7 +61,36 @@ class Cartesian(CartesianConversion):
             4-Tuple, containing Position 4-Vector in SI units
 
         """
-        return (_c * self.t.si.value, self.x.si.value, self.y.si.value, self.z.si.value)
+        return (_c * self.e0.si.value, self.e1.si.value, self.e2.si.value, self.e3.si.value)
+        
+        
+
+class Cartesian(Coordinates, CartesianConversion):
+    """
+    Class for defining 3-Position & 4-Position in Cartesian Coordinates \
+    using SI units
+
+    """
+
+    @u.quantity_input(e0=u.s, e1=u.m, e2=u.m, e3=u.m)
+    def __init__(self, e0, e1, e2, e3):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        t : float
+            Time
+        x : float
+            x-Component of 3-Position
+        y : float
+            y-Component of 3-Position
+        z : float
+            z-Component of 3-Position
+
+        """
+        CartesianConversion.__init__(self, e0.si.value, e1.si.value, e2.si.value, e3.si.value)
+        Coordinates.__init__(self, e0, e1, e2, e3, "Cartesian", 't', 'x','y','z')
 
     def to_spherical(self, **kwargs):
         """

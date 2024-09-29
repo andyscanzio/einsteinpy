@@ -12,16 +12,16 @@ class Conversion:
     
     """
 
-    def __init__(self, e0, e1, e2, e3, u0=None, u1=None, u2=None):
+    def __init__(self, e0, e1, e2, e3, u1=None, u2=None, u3=None):
         self.e0_si = e0
         self.e1_si = e1
         self.e2_si = e2
         self.e3_si = e3
-        self.u0_si = u0
         self.u1_si = u1
         self.u2_si = u2
+        self.u3_si = u3
         self._velocities_provided = not (
-            (u0 is None) or (u1 is None) or (u2 is None)
+            (u1 is None) or (u2 is None) or (u3 is None)
         )
 
     def values(self):
@@ -31,9 +31,9 @@ class Conversion:
                 self.e1_si,
                 self.e2_si,
                 self.e3_si,
-                self.u0_si,
                 self.u1_si,
                 self.u2_si,
+                self.u3_si,
             )
 
         return self.e0_si, self.e1_si, self.e2_si, self.e3_si
@@ -45,7 +45,7 @@ class CartesianConversion(Conversion):
 
     """
 
-    def __init__(self, e0, e1, e2, e3, u0=None, u1=None, u2=None):
+    def __init__(self, e0, e1, e2, e3, u1=None, u2=None, u3=None):
         """
         Constructor
 
@@ -59,15 +59,15 @@ class CartesianConversion(Conversion):
             y-Component of 3-Position
         e3 : float
             z-Component of 3-Position
-        u0 : float, optional
-            x-Component of 3-Velocity
         u1 : float, optional
-            y-Component of 3-Velocity
+            x-Component of 3-Velocity
         u2 : float, optional
+            y-Component of 3-Velocity
+        u3 : float, optional
             z-Component of 3-Velocity
 
         """
-        super().__init__(e0, e1, e2, e3, u0, u1, u2)
+        super().__init__(e0, e1, e2, e3, u1, u2, u3)
 
     def values(self):
         """
@@ -104,9 +104,9 @@ class CartesianConversion(Conversion):
             self.e1_si,
             self.e2_si,
             self.e3_si,
-            self.u0_si,
             self.u1_si,
             self.u2_si,
+            self.u3_si,
             self._velocities_provided,
         )
 
@@ -157,9 +157,9 @@ class CartesianConversion(Conversion):
             self.e2_si,
             self.e3_si,
             alpha,
-            self.u0_si,
             self.u1_si,
             self.u2_si,
+            self.u3_si,
             self._velocities_provided,
         )
 
@@ -170,7 +170,7 @@ class SphericalConversion(Conversion):
 
     """
 
-    def __init__(self, e0, e1, e2, e3, u0=None, u1=None, u2=None):
+    def __init__(self, e0, e1, e2, e3, u1=None, u2=None, u3=None):
         """
         Constructor
 
@@ -184,15 +184,15 @@ class SphericalConversion(Conversion):
             theta-Component of 3-Position
         e3 : float
             phi-Component of 3-Position
-        u0 : float, optional
-            r-Component of 3-Velocity
         u1 : float, optional
-            theta-Component of 3-Velocity
+            r-Component of 3-Velocity
         u2 : float, optional
+            theta-Component of 3-Velocity
+        u3 : float, optional
             phi-Component of 3-Velocity
 
         """
-        super().__init__(e0, e1, e2, e3, u0, u1, u2)
+        super().__init__(e0, e1, e2, e3, u1, u2, u3)
 
     def values(self):
         """
@@ -229,9 +229,9 @@ class SphericalConversion(Conversion):
             self.e1_si,
             self.e2_si,
             self.e3_si,
-            self.u0_si,
             self.u1_si,
             self.u2_si,
+            self.u3_si,
             self._velocities_provided,
         )
 
@@ -286,7 +286,7 @@ class BoyerLindquistConversion(Conversion):
 
     """
 
-    def __init__(self, e0, e1, e2, e3, u0=None, u1=None, u2=None):
+    def __init__(self, e0, e1, e2, e3, u1=None, u2=None, u3=None):
         """
         Constructor
 
@@ -300,15 +300,15 @@ class BoyerLindquistConversion(Conversion):
             theta-Component of 3-Position
         e3 : float
             phi-Component of 3-Position
-        u0 : float, optional
-            r-Component of 3-Velocity
         u1 : float, optional
-            theta-Component of 3-Velocity
+            r-Component of 3-Velocity
         u2 : float, optional
+            theta-Component of 3-Velocity
+        u3 : float, optional
             phi-Component of 3-Velocity
 
         """
-        super().__init__(e0, e1, e2, e3, u0, u1, u2)
+        super().__init__(e0, e1, e2, e3, u1, u2, u3)
 
     def values(self):
         """
@@ -371,9 +371,9 @@ class BoyerLindquistConversion(Conversion):
             self.e2_si,
             self.e3_si,
             alpha,
-            self.u0_si,
             self.u1_si,
             self.u2_si,
+            self.u3_si,
             self._velocities_provided,
         )
 
